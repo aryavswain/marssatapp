@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarsNet-RL - Operations Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE -->
+<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
+<!-- MARSNET-RL ENGINE: TEXT CONTRAST, UNIVERSAL GLASSMORPHISM, AND PLOT ISOLATION SCRIPT -->
+<script>
+    (function() {
+        function applyGlobalTheme() {
+            const currentTheme = localStorage.getItem('mn-theme') || 'cosmic';
+            const currentBg = localStorage.getItem('mn-bg') || 'dark';
+            
+            const themeMatrix = {
+                cosmic: { glow1: 'rgba(79, 70, 229, 0.35)', glow2: 'rgba(202, 138, 4, 0.35)', accent: '#eab308' },
+                aurora: { glow1: 'rgba(6, 182, 212, 0.35)', glow2: 'rgba(217, 70, 239, 0.35)', accent: '#06b6d4' },
+                solar:  { glow1: 'rgba(249, 115, 22, 0.35)', glow2: 'rgba(220, 38, 38, 0.35)', accent: '#f97316' },
+                matrix: { glow1: 'rgba(16, 185, 129, 0.35)', glow2: 'rgba(132, 204, 22, 0.35)', accent: '#10b981' }
+            };
+            
+            // Dynamic Glassmorphism Layer Matrix with strict text color values
+            const bgMatrix = {
+                dark:  { 
+                    bg: '#060814', 
+                    glass: 'rgba(11, 15, 25, 0.65)', 
+                    border: 'rgba(255, 255, 255, 0.08)', 
+                    text: '#f3f4f6', 
+                    muted: '#9ca3af' 
+                },
+                grey:  { 
+                    bg: '#1e2235', 
+                    glass: 'rgba(30, 34, 53, 0.65)', 
+                    border: 'rgba(255, 255, 255, 0.08)', 
+                    text: '#f1f5f9', 
+                    muted: '#94a3b8' 
+                },
+                light: { 
+                    bg: '#f8fafc', 
+                    glass: 'rgba(255, 255, 255, 0.70)', 
+                    border: 'rgba(15, 23, 42, 0.08)', 
+                    text: '#0f172a', 
+                    muted: '#475569' 
+                }
+            };
+            
+            const t = themeMatrix[currentTheme] || themeMatrix.cosmic;
+            const b = bgMatrix[currentBg] || bgMatrix.dark;
+            
+            document.documentElement.style.setProperty('--glow-1', t.glow1);
+            document.documentElement.style.setProperty('--glow-2', t.glow2);
+            document.documentElement.style.setProperty('--accent', t.accent);
+            
+            let overrideStyle = document.getElementById('mn-theme-overrides');
+            if (!overrideStyle) {
+                overrideStyle = document.createElement('style');
+                overrideStyle.id = 'mn-theme-overrides';
+                document.head.appendChild(overrideStyle);
+            }
+            
+            overrideStyle.innerHTML = `
+                /* Base Scaffolding */
+                body, html, .grid-bg { background-color: ${b.bg} !important; color: ${b.text} !important; position: relative; overflow-x: hidden; }
+                
+                /* High-Contrast Dynamic Text Engine Rules */
+                h1, h2, h3, h4, h5, h6, th, strong, .text-white { color: ${b.text} !important; }
+                p, span, li, td, label, .text-gray-400, .text-gray-300, .text-slate-400 { color: ${b.muted} !important; }
+                
+                /* Interactive Theme Accents */
+                .text-yellow-500, .text-gold, .group-hover\\:text-yellow-400, a:hover { color: var(--accent) !important; }
+                .border-yellow-500, .border-yellow-500\\/30 { border-color: var(--accent) !important; }
+                
+                /* Universal Glassmorphism System Application */
+                nav, header, footer, aside, 
+                .card, .bg-\\[\\#1e293b\\], .bg-slate-900, .bg-\\[\\#1e293b\\]\\/50, .bg-\\[\\#0b0f19\\], 
+                section.panel, div.dashboard-card {
+                    background: ${b.glass} !important;
+                    backdrop-filter: blur(16px) saturate(120%) !important;
+                    -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+                    border: 1px solid ${b.border} !important;
+                }
+                
+                /* Inputs & Control Interface Matching */
+                input, select, textarea { 
+                    background: ${b.glass} !important; 
+                    color: ${b.text} !important; 
+                    border: 1px solid ${b.border} !important; 
+                    backdrop-filter: blur(8px) !important;
+                }
+                
+                /* ABSOLUTE PLOT OPAQUE ISOLATION ENGINE (index.html Safeguard) */
+                .js-plotly-plot, .plot-container, .main-svg, .plotly, #orbit-plot, [id^="plotly-html-element"] {
+                    background-color: #000000 !important;
+                    background: #000000 !important;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    opacity: 1 !important;
+                    border-radius: 4px;
+                }
+                
+                /* Ambient Glow Infrastructure */
+                .glow-orb {
+                    position: absolute;
+                    filter: blur(130px);
+                    opacity: 0.22;
+                    mix-blend-mode: screen;
+                    z-index: 0;
+                    pointer-events: none;
+                    animation: floatGlow 14s ease-in-out infinite alternate;
+                }
+                @keyframes floatGlow {
+                    0% { transform: translate(0px, 0px) scale(1); }
+                    100% { transform: translate(40px, 60px) scale(1.15); }
+                }
+            `;
+
+            function initializeGlowNodes() {
+                if (!document.body) return;
+                let orb1 = document.getElementById('mn-glow-left');
+                let orb2 = document.getElementById('mn-glow-right');
+                
+                if (!orb1) {
+                    orb1 = document.createElement('div');
+                    orb1.id = 'mn-glow-left';
+                    orb1.className = 'glow-orb';
+                    orb1.style.cssText = 'top: -5%; left: -5%; width: 55vw; height: 55vw;';
+                    document.body.insertBefore(orb1, document.body.firstChild);
+                }
+                if (!orb2) {
+                    orb2 = document.createElement('div');
+                    orb2.id = 'mn-glow-right';
+                    orb2.className = 'glow-orb';
+                    orb2.style.cssText = 'top: 25%; right: -5%; width: 45vw; height: 45vw; animation-delay: -5s;';
+                    document.body.insertBefore(orb2, document.body.firstChild);
+                }
+                orb1.style.backgroundColor = 'var(--glow-1)';
+                orb2.style.backgroundColor = 'var(--glow-2)';
+            }
+
+            if (document.body) {
+                initializeGlowNodes();
+            } else {
+                document.addEventListener('DOMContentLoaded', initializeGlowNodes);
+            }
+        }
+        window.applyGlobalTheme = applyGlobalTheme;
+        applyGlobalTheme();
+    })();
+</script>
+</head>
+<body class="bg-[#0f172a] text-gray-300 min-h-screen font-sans flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-gray-800 bg-[#0f172a]/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <span class="text-xl">📚</span>
+            <h1 class="text-xl font-bold text-white font-mono tracking-wide">MarsNet-RL // Documentation</h1>
+        </div>
+        <a href="/dashboard" class="text-sm font-semibold text-yellow-500 hover:text-yellow-400 border border-yellow-500/30 bg-[#1e293b] px-4 py-2 rounded-lg transition-all">
+            ← Return to Mission Control
+        </a>
+    </header>
+
+    <!-- Content Container -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-6 md:p-10 space-y-10">
+        
+        <section class="space-y-4">
+            <h2 class="text-3xl font-extrabold text-white">Operations Manual & Quick Start</h2>
+            <p class="text-gray-400">
+                Follow this documentation guide to deploy, initialize, and tune the reinforcement learning satellite tracking dashboard environment locally.
+            </p>
+        </section>
+
+        <hr class="border-gray-800">
+
+        <!-- Installation -->
+        <section class="space-y-4">
+            <h3 class="text-xl font-bold text-yellow-500 font-mono">1. Environment Setup</h3>
+            <p class="text-sm text-gray-400">Install the python core dependencies using pip:</p>
+            <pre class="bg-black/60 border border-gray-800 p-4 rounded-xl font-mono text-sm text-green-400 overflow-x-auto">
+pip install flask groq numpy pandas plotly</pre>
+            <p class="text-sm text-gray-400">Ensure your API credentials are initialized properly inside your terminal framework environment prior to startup:</p>
+            <pre class="bg-black/60 border border-gray-800 p-4 rounded-xl font-mono text-sm text-yellow-500 overflow-x-auto">
+export GROQ_API_KEY="your_actual_api_key_here"
+python app_3.py</pre>
+        </section>
+
+        <!-- Operation Instructions -->
+        <section class="space-y-4">
+            <h3 class="text-xl font-bold text-yellow-500 font-mono">2. Mission Control Control Interface</h3>
+            <ul class="list-disc pl-5 space-y-2 text-sm text-gray-400">
+                <li><strong class="text-white">Initialize Autonomous Routing:</strong> Starts live dashboard iterations and updates the data tables.</li>
+                <li><strong class="text-white">Online Training Toggle:</strong> Enables immediate, runtime adjustment weights so the agent learns actively while processing frames.</li>
+                <li><strong class="text-white">Refresh Configuration:</strong> Instantly updates structural values like total satellites, target altitudes, and payload masses without breaking current WebGL view angles.</li>
+            </ul>
+        </section>
+
+        <!-- Hyperparameter Tuning -->
+        <section class="space-y-4">
+            <h3 class="text-xl font-bold text-yellow-500 font-mono">3. Agent Parameter Optimization</h3>
+            <p class="text-sm text-gray-400">
+                Developers can optimize convergence behavior inside <code>QLearningAgent</code> by adjusting core parameters:
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+                <div class="bg-black/30 border border-gray-850 p-4 rounded-lg">
+                    <p class="text-white font-bold text-sm mb-1">Learning Rate (α)</p>
+                    <p class="text-gray-400 mb-2">Default: 0.1</p>
+                    <p class="text-gray-500">Determines the update weight applied to new tracking rewards.</p>
+                </div>
+                <div class="bg-black/30 border border-gray-850 p-4 rounded-lg">
+                    <p class="text-white font-bold text-sm mb-1">Discount Factor (γ)</p>
+                    <p class="text-gray-400 mb-2">Default: 0.95</p>
+                    <p class="text-gray-500">Determines the priority weight placed on long-term future stability.</p>
+                </div>
+                <div class="bg-black/30 border border-gray-850 p-4 rounded-lg">
+                    <p class="text-white font-bold text-sm mb-1">Epsilon Decay</p>
+                    <p class="text-gray-400 mb-2">Default: 0.996</p>
+                    <p class="text-gray-500">Controls how quickly the agent shifts from random actions to target optimization rules.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-gray-800 py-6 text-center text-xs text-gray-500 bg-black/20">
+        MarsNet-RL // System Reference Manuals & Technical Documentation
+    </footer>
+</body>
+</html>

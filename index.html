@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarsNet-RL | Autonomous Routing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
+    <style>
+        body {
+            background-color: #0e1117;
+            color: #fafafa;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+    </style>
+    <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE -->
+<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
+<!-- MARSNET-RL ENGINE: TEXT CONTRAST, UNIVERSAL GLASSMORPHISM, AND PLOT ISOLATION SCRIPT -->
+<script>
+    (function() {
+        function applyGlobalTheme() {
+            const currentTheme = localStorage.getItem('mn-theme') || 'cosmic';
+            const currentBg = localStorage.getItem('mn-bg') || 'dark';
+            
+            const themeMatrix = {
+                cosmic: { glow1: 'rgba(79, 70, 229, 0.35)', glow2: 'rgba(202, 138, 4, 0.35)', accent: '#eab308' },
+                aurora: { glow1: 'rgba(6, 182, 212, 0.35)', glow2: 'rgba(217, 70, 239, 0.35)', accent: '#06b6d4' },
+                solar:  { glow1: 'rgba(249, 115, 22, 0.35)', glow2: 'rgba(220, 38, 38, 0.35)', accent: '#f97316' },
+                matrix: { glow1: 'rgba(16, 185, 129, 0.35)', glow2: 'rgba(132, 204, 22, 0.35)', accent: '#10b981' }
+            };
+            
+            // Dynamic Glassmorphism Layer Matrix with strict text color values
+            const bgMatrix = {
+                dark:  { 
+                    bg: '#060814', 
+                    glass: 'rgba(11, 15, 25, 0.65)', 
+                    border: 'rgba(255, 255, 255, 0.08)', 
+                    text: '#f3f4f6', 
+                    muted: '#9ca3af' 
+                },
+                grey:  { 
+                    bg: '#1e2235', 
+                    glass: 'rgba(30, 34, 53, 0.65)', 
+                    border: 'rgba(255, 255, 255, 0.08)', 
+                    text: '#f1f5f9', 
+                    muted: '#94a3b8' 
+                },
+                light: { 
+                    bg: '#f8fafc', 
+                    glass: 'rgba(255, 255, 255, 0.70)', 
+                    border: 'rgba(15, 23, 42, 0.08)', 
+                    text: '#0f172a', 
+                    muted: '#475569' 
+                }
+            };
+            
+            const t = themeMatrix[currentTheme] || themeMatrix.cosmic;
+            const b = bgMatrix[currentBg] || bgMatrix.dark;
+            
+            document.documentElement.style.setProperty('--glow-1', t.glow1);
+            document.documentElement.style.setProperty('--glow-2', t.glow2);
+            document.documentElement.style.setProperty('--accent', t.accent);
+            
+            let overrideStyle = document.getElementById('mn-theme-overrides');
+            if (!overrideStyle) {
+                overrideStyle = document.createElement('style');
+                overrideStyle.id = 'mn-theme-overrides';
+                document.head.appendChild(overrideStyle);
+            }
+            
+            overrideStyle.innerHTML = `
+                /* Base Scaffolding */
+                body, html, .grid-bg { background-color: ${b.bg} !important; color: ${b.text} !important; position: relative; overflow-x: hidden; }
+                
+                /* High-Contrast Dynamic Text Engine Rules */
+                h1, h2, h3, h4, h5, h6, th, strong, .text-white { color: ${b.text} !important; }
+                p, span, li, td, label, .text-gray-400, .text-gray-300, .text-slate-400 { color: ${b.muted} !important; }
+                
+                /* Interactive Theme Accents */
+                .text-yellow-500, .text-gold, .group-hover\\:text-yellow-400, a:hover { color: var(--accent) !important; }
+                .border-yellow-500, .border-yellow-500\\/30 { border-color: var(--accent) !important; }
+                
+                /* Universal Glassmorphism System Application */
+                nav, header, footer, aside, 
+                .card, .bg-\\[\\#1e293b\\], .bg-slate-900, .bg-\\[\\#1e293b\\]\\/50, .bg-\\[\\#0b0f19\\], 
+                section.panel, div.dashboard-card {
+                    background: ${b.glass} !important;
+                    backdrop-filter: blur(16px) saturate(120%) !important;
+                    -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+                    border: 1px solid ${b.border} !important;
+                }
+                
+                /* Inputs & Control Interface Matching */
+                input, select, textarea { 
+                    background: ${b.glass} !important; 
+                    color: ${b.text} !important; 
+                    border: 1px solid ${b.border} !important; 
+                    backdrop-filter: blur(8px) !important;
+                }
+                
+                /* ABSOLUTE PLOT OPAQUE ISOLATION ENGINE (index.html Safeguard) */
+                #orbitalPlot {
+                    background-color: #000000 !important;
+                    background: #000000 !important;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    opacity: 1 !important;
+                    border-radius: 4px;
+                }
+                
+                .js-plotly-plot, .plot-container, .plotly, .gl-container {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+                /* Ambient Glow Infrastructure */
+                .glow-orb {
+                    position: absolute;
+                    filter: blur(130px);
+                    opacity: 0.22;
+                    mix-blend-mode: screen;
+                    z-index: 0;
+                    pointer-events: none;
+                    animation: floatGlow 14s ease-in-out infinite alternate;
+                }
+                @keyframes floatGlow {
+                    0% { transform: translate(0px, 0px) scale(1); }
+                    100% { transform: translate(40px, 60px) scale(1.15); }
+                }
+            `;
+
+            function initializeGlowNodes() {
+                if (!document.body) return;
+                let orb1 = document.getElementById('mn-glow-left');
+                let orb2 = document.getElementById('mn-glow-right');
+                
+                if (!orb1) {
+                    orb1 = document.createElement('div');
+                    orb1.id = 'mn-glow-left';
+                    orb1.className = 'glow-orb';
+                    orb1.style.cssText = 'top: -5%; left: -5%; width: 55vw; height: 55vw;';
+                    document.body.insertBefore(orb1, document.body.firstChild);
+                }
+                if (!orb2) {
+                    orb2 = document.createElement('div');
+                    orb2.id = 'mn-glow-right';
+                    orb2.className = 'glow-orb';
+                    orb2.style.cssText = 'top: 25%; right: -5%; width: 45vw; height: 45vw; animation-delay: -5s;';
+                    document.body.insertBefore(orb2, document.body.firstChild);
+                }
+                orb1.style.backgroundColor = 'var(--glow-1)';
+                orb2.style.backgroundColor = 'var(--glow-2)';
+            }
+
+            if (document.body) {
+                initializeGlowNodes();
+            } else {
+                document.addEventListener('DOMContentLoaded', initializeGlowNodes);
+            }
+        }
+        window.applyGlobalTheme = applyGlobalTheme;
+        applyGlobalTheme();
+    })();
+</script>
+</head>
+<body class="font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- SIDEBAR PANEL -->
+        <aside class="w-80 bg-[#111827] border-r border-gray-800 flex flex-col justify-between overflow-y-auto custom-scrollbar p-5 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-yellow-500 flex items-center gap-2">🚀 MarsNet-RL Control</h2>
+                <p class="text-xs text-gray-400 mt-1 pb-4 border-b border-gray-800">Version 1.0 | Team Cassiopeia</p>
+                
+                <div class="mt-4 space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1">Number of Satellites (<span id="satNumVal">20</span>)</label>
+                        <input id="num_satellites" type="range" min="5" max="50" value="20" class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('satNumVal').innerText=this.value; triggerUpdate();">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1">Satellite Mass: <span id="satMassVal">200</span> kg</label>
+                        <input id="sat_mass" type="range" min="20" max="1000" value="200" step="10" class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('satMassVal').innerText=this.value; triggerUpdate();">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1">Debris Density (<span id="debrisVal">0.3</span>)</label>
+                        <input id="debris_density" type="range" min="0.0" max="1.0" value="0.3" step="0.1" class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('debrisVal').innerText=this.value;">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1">
+                            Simulation Frame Delay: <span id="simSpeedVal" class="text-yellow-500 font-mono">40</span> ms
+                        </label>
+                        <input type="range" id="sim_speed" min="15" max="500" value="40" step="5" 
+                            class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer"
+                            oninput="triggerUpdate();">
+                        <p id="simTimeRate" class="text-xs text-yellow-500/80 mt-1 font-mono italic">
+                            ⏱️ Rate: ~104.2 simulated mins / real sec
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3 py-2">
+                        <input id="training_mode" type="checkbox" class="w-4 h-4 text-yellow-500 border-gray-600 rounded focus:ring-opacity-0 bg-gray-700 accent-yellow-500">
+                        <label for="training_mode" class="text-sm font-medium text-gray-300">Enable Training Mode (RL Active)</label>
+                    </div>
+
+                    <hr class="border-gray-800">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Simulation Parameters</h3>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Max Delta-V (m/s)</label>
+                        <input id="thrust_intensity" type="number" min="0.1" max="10.0" value="1.0" step="0.1" class="w-full bg-[#1f2937] border border-gray-700 rounded p-1.5 text-sm focus:outline-none focus:border-yellow-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Target Orbit (km)</label>
+                        <select id="orbit_altitude" class="w-full bg-[#1f2937] border border-gray-700 rounded p-1.5 text-sm focus:outline-none focus:border-yellow-500" onchange="triggerUpdate();">
+                            <option value="500">500</option>
+                            <option value="1000" selected>1000</option>
+                            <option value="2500">2500</option>
+                            <option value="5000">5000</option>
+                            <option value="17000">17000</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTEGRATED CHATBOT CONTAINER -->
+            <div class="border-t border-gray-800 pt-4 flex flex-col h-[340px]">
+                <h3 class="text-sm font-bold text-gray-300 mb-2 flex items-center gap-1">💬 MarsNet Assistant</h3>
+                <div id="chat_container" class="flex-1 overflow-y-auto bg-[#1f2937] p-3 rounded space-y-2 text-xs custom-scrollbar">
+                    <div class="bg-slate-800 p-2 rounded text-gray-200"><strong>Assistant:</strong> Hello! I am your MarsNet-RL operations assistant. How can I help you optimize your orbital routing today?</div>
+                </div>
+                <div class="mt-2 flex gap-1">
+                    <input id="chat_input" type="text" placeholder="Ask about orbital logistics..." class="flex-1 bg-gray-800 border border-gray-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-yellow-500" onkeydown="if(event.key === 'Enter') sendChatMessage();">
+                    <button onclick="sendChatMessage()" class="bg-yellow-600 hover:bg-yellow-500 text-black text-xs font-bold px-3 py-1.5 rounded transition">Send</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN RUNTIME WINDOW DASHBOARD -->
+        <main class="flex-1 flex flex-col overflow-y-auto custom-scrollbar bg-[#0f172a] p-6 space-y-6">
+            
+            <!-- HEADER TITLE BLOCK -->
+            <div>
+                <h1 class="text-3xl font-extrabold text-white">🛰️ MarsNet-RL: Autonomous Orbital Routing</h1>
+                <p class="text-gray-400 text-sm mt-1"><strong>Objective:</strong> Maintain &gt;90% network uptime while avoiding 99% of orbital collisions.</p>
+            </div>
+
+            <!-- 1. ORBITAL PLOT (MOVED UP FOR IMMEDIACY) -->
+            <div class="bg-black border border-gray-800 rounded-xl p-4">
+                <h3 class="text-sm font-semibold text-gray-300 mb-2">Real-World Martian Orbital Dynamics Visualization</h3>
+                <p class="text-xs text-gray-400 mb-3">🛰️ <strong>Current Orbital Velocity:</strong> <span id="velocityMetrics" class="bg-gray-800 px-1.5 py-0.5 rounded text-yellow-500 font-mono">0.000 km/s</span> <em>(Passive Keplerian drift)</em></p>
+                <div id="orbitalPlot" class="w-full rounded bg-black"></div>
+            </div>
+
+            <!-- 2. KPI METRIC GRID CONTAINER (RELOCATED BELOW PLOT) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-[#1e293b] border border-gray-800 p-4 rounded-xl">
+                    <p class="text-xs font-medium uppercase text-gray-400">Live Collision Risk</p>
+                    <p class="text-2xl font-bold text-white mt-1">0.02%</p>
+                    <p class="text-xs text-green-400 mt-1">↘ -0.4% from baseline</p>
+                </div>
+                <div class="bg-[#1e293b] border border-gray-800 p-4 rounded-xl">
+                    <p class="text-xs font-medium uppercase text-gray-400">Network Coverage</p>
+                    <p class="text-2xl font-bold text-white mt-1">94.2%</p>
+                    <p class="text-xs text-gray-400 mt-1">Target: 90%</p>
+                </div>
+                <div class="bg-[#1e293b] border border-gray-800 p-4 rounded-xl">
+                    <p class="text-xs font-medium uppercase text-gray-400">Agent Success Rate</p>
+                    <p class="text-2xl font-bold text-white mt-1">88.5%</p>
+                    <p class="text-xs text-yellow-500 mt-1">Stage 2 Phase</p>
+                </div>
+            </div>
+
+            <!-- 3. DEEPER TELEMETRY & TRAINING TABS -->
+            <div>
+                <div class="flex border-b border-gray-800">
+                    <button id="tab1_btn" onclick="switchTab(1)" class="py-2 px-4 font-medium text-sm border-b-2 border-yellow-500 text-yellow-500 focus:outline-none">🚀 Live Telemetry</button>
+                    <button id="tab2_btn" onclick="switchTab(2)" class="py-2 px-4 font-medium text-sm text-gray-400 border-b-2 border-transparent hover:text-gray-200 focus:outline-none">🧠 RL Training Logs</button>
+                </div>
+
+                <div class="mt-4">
+                    <div id="tab1_content" class="space-y-4">
+                        <div class="flex flex-col gap-2">
+                            <button id="initRoutingBtn" onclick="initializeRouting()" class="w-full bg-[#1e293b] hover:bg-slate-700 text-yellow-500 border border-yellow-500/30 text-sm font-semibold py-2 rounded transition flex justify-center items-center gap-2">
+                                Initialize Autonomous Routing
+                            </button>
+                            <div id="status_box" class="hidden text-xs bg-emerald-950/40 border border-emerald-800 text-emerald-400 p-3 rounded"></div>
+                        </div>
+
+                        <p class="text-sm font-semibold text-gray-300">Current Orbital Metrics</p>
+                        <div class="overflow-x-auto border border-gray-800 rounded-xl">
+                            <table class="w-full text-left text-sm text-gray-400">
+                                <thead class="bg-[#1e293b] text-xs uppercase text-gray-300">
+                                    <tr>
+                                        <th class="px-4 py-3">Satellite Ident</th>
+                                        <th class="px-4 py-3 text-center">Collision Events</th>
+                                        <th class="px-4 py-3 text-center">Fuel Usage [ASCENT] (kg)</th>
+                                        <th class="px-4 py-3 text-center">Uptime (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="telemetry_tbody" class="divide-y divide-gray-800">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="tab2_content" class="hidden space-y-4">
+                        <h3 class="text-sm font-bold text-gray-300">RL Reward Function Monitoring</h3>
+                        <div id="rewardPlot" class="w-full h-64 bg-slate-900 rounded"></div>
+                        <div class="bg-amber-950/40 border border-amber-800 text-amber-500 text-xs p-3 rounded">
+                            ⚠️ <strong>Detection:</strong> RL agent found a potential 'deep-space drift' loophole. Adjusting reward penalty parameters.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="border-t border-gray-800 pt-4 text-center text-xs text-gray-500">
+                MarsNet-RL | Autonomous Deep-Space Satellite Routing | Team Cassiopeia
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        let routingInitializedState = false;
+        let messagesArray = [
+            {"role": "assistant", "content": "Hello! I am your MarsNet-RL operations assistant. How can I help you optimize your orbital routing today?"}
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            triggerUpdate();
+        });
+
+        function triggerUpdate() {
+            const frameDuration = parseInt(document.getElementById('sim_speed').value);
+            document.getElementById('simSpeedVal').innerText = frameDuration;
+
+            const simMinsPerSec = (250000 / frameDuration) / 60;
+            document.getElementById('simTimeRate').innerText = `⏱️ Rate: ~${simMinsPerSec.toFixed(1)} simulated mins / real sec`;
+            
+            const payload = { 
+                num_satellites: document.getElementById('num_satellites').value, 
+                sat_mass: document.getElementById('sat_mass').value, 
+                orbit_altitude: parseFloat(document.getElementById('orbit_altitude').value), 
+                routing_initialized: routingInitializedState, 
+                frame_duration: frameDuration,
+                training_mode: document.getElementById('training_mode').checked 
+            };
+
+            fetch('/api/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                const plotDataObj = JSON.parse(data.plot_data);
+                const graphDiv = document.getElementById('orbitalPlot');
+                
+                // FIX: Capture and persist the user's real-time zoom/pan/rotation camera coordinates
+                if (graphDiv && graphDiv.layout && graphDiv.layout.scene && graphDiv.layout.scene.camera) {
+                    plotDataObj.layout.scene.camera = graphDiv.layout.scene.camera;
+                }
+                
+                Plotly.react('orbitalPlot', plotDataObj.data, plotDataObj.layout)
+                .then(function() {
+                    if (plotDataObj.frames && plotDataObj.frames.length > 0) {
+                        Plotly.addFrames('orbitalPlot', plotDataObj.frames);
+                    }
+                });
+                
+                document.getElementById('velocityMetrics').innerText = `${data.current_velocity} km/s`;
+                
+                const tbody = document.getElementById('telemetry_tbody');
+                tbody.innerHTML = '';
+                data.telemetry.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-800/50 transition";
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 font-medium text-white">${row.satellite}</td>
+                        <td class="px-4 py-3 text-center">${row.collisions}</td>
+                        <td class="px-4 py-3 text-center">${row.fuel}</td>
+                        <td class="px-4 py-3 text-center">${row.uptime}%</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                renderLineChart(data.line_chart);
+            })
+            .catch(err => console.error("Error updating system logs metrics:", err));
+        }
+
+        function initializeRouting() {
+            routingInitializedState = true;
+            const statusBox = document.getElementById('status_box');
+            statusBox.classList.remove('hidden');
+            
+            statusBox.innerHTML = "⏳ Simulating orbital paths...";
+            setTimeout(() => {
+                statusBox.innerHTML = "⏳ Simulating orbital paths...<br>⏳ Predicting congestion windows...";
+                setTimeout(() => {
+                    statusBox.innerHTML = "⏳ Simulating orbital paths...<br>⏳ Predicting congestion windows...<br>⏳ Applying autonomous maneuvers...";
+                    setTimeout(() => {
+                        statusBox.className = "text-xs bg-emerald-950/70 border border-emerald-600 text-emerald-400 p-3 rounded";
+                        statusBox.innerHTML = "✅ <strong>System Stable:</strong> Autonomous avoidance active";
+                        triggerUpdate();
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }
+
+        function sendChatMessage() {
+            const inputEl = document.getElementById('chat_input');
+            const prompt = inputEl.value.trim();
+            if(!prompt) return;
+
+            inputEl.value = '';
+            const container = document.getElementById('chat_container');
+
+            messagesArray.push({"role": "user", "content": prompt});
+            container.innerHTML += `<div class="bg-yellow-950/30 border border-yellow-700/30 p-2 rounded text-gray-200"><strong>User:</strong> ${prompt}</div>`;
+            container.scrollTop = container.scrollHeight;
+
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: messagesArray })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    messagesArray.push({"role": "assistant", "content": data.content});
+                    container.innerHTML += `<div class="bg-slate-800 p-2 rounded text-gray-200"><strong>Assistant:</strong> ${data.content}</div>`;
+                } else {
+                    container.innerHTML += `<div class="bg-red-900/40 border border-red-700 p-2 rounded text-red-400"><strong>Error:</strong> ${data.error || 'Failed payload connectivity to Groq.'}</div>`;
+                }
+                container.scrollTop = container.scrollHeight;
+            })
+            .catch(err => {
+                container.innerHTML += `<div class="bg-red-900/40 border border-red-700 p-2 rounded text-red-400"><strong>Error:</strong> Connectivity down.</div>`;
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        function switchTab(tabNum) {
+            const t1Btn = document.getElementById('tab1_btn');
+            const t2Btn = document.getElementById('tab2_btn');
+            const t1Cont = document.getElementById('tab1_content');
+            const t2Cont = document.getElementById('tab2_content');
+
+            if(tabNum === 1) {
+                t1Btn.className = "py-2 px-4 font-medium text-sm border-b-2 border-yellow-500 text-yellow-500 focus:outline-none";
+                t2Btn.className = "py-2 px-4 font-medium text-sm text-gray-400 border-b-2 border-transparent hover:text-gray-200 focus:outline-none";
+                t1Cont.classList.remove('hidden');
+                t2Cont.classList.add('hidden');
+            } else {
+                t2Btn.className = "py-2 px-4 font-medium text-sm border-b-2 border-yellow-500 text-yellow-500 focus:outline-none";
+                t1Btn.className = "py-2 px-4 font-medium text-sm text-gray-400 border-b-2 border-transparent hover:text-gray-200 focus:outline-none";
+                t2Cont.classList.remove('hidden');
+                t1Cont.classList.add('hidden');
+                Plotly.Plots.resize('rewardPlot');
+            }
+        }
+
+        function renderLineChart(seriesData) {
+            const trace1 = {
+                x: Array.from({length: seriesData.length}, (_, i) => i),
+                y: seriesData.map(d => d[0]),
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Param Path Alpha (Episode Reward)',
+                line: { color: '#38bdf8' }
+            };
+
+            const trace2 = {
+                x: Array.from({length: seriesData.length}, (_, i) => i),
+                y: seriesData.map(d => d[1]),
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Param Path Beta (Max Q-Value)',
+                line: { color: '#fbbf24' }
+            };
+
+            const layout = {
+                margin: { l: 55, r: 10, b: 45, t: 10 },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                xaxis: { 
+            title: { 
+                text: 'Training Progress (Frames)', 
+                font: { color: '#94a3b8', size: 11 } 
+            },
+            gridcolor: '#334155', 
+            tickfont: {color: '#94a3b8'} 
+        },
+                yaxis: { 
+            title: { 
+                text: 'Metric Values', 
+                font: { color: '#94a3b8', size: 11 } 
+            },
+            gridcolor: '#334155', 
+            tickfont: {color: '#94a3b8'} 
+        },
+        legend: { font: { color: '#ffffff' } }
+            };
+
+            Plotly.newPlot('rewardPlot', [trace1, trace2], layout);
+        }
+    </script>
+</body>
+</html>

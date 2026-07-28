@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarsNet-RL | Next-Gen Multi-Agent Orbital Systems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #060814;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Grid Background Pattern */
+        .grid-bg {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Ambient Glowing Blobs */
+        .glow-orb {
+            filter: blur(120px);
+            opacity: 0.25;
+            mix-blend-mode: screen;
+            animation: floatGlow 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0px, 0px) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.2); }
+        }
+
+        /* Professional Reveal Animations */
+        .reveal-up {
+            animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        @keyframes revealUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animated Node Graph Simulation (LangGraph Vibe) */
+        .node-pulse {
+            animation: nodePulse 2s infinite alternate;
+        }
+        @keyframes nodePulse {
+            0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+            100% { box-shadow: 0 0 16px 6px rgba(234, 179, 8, 0.2); }
+        }
+    </style>
+    <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE -->
+<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
+<!-- MARSNET-RL ENGINE: TEXT CONTRAST, UNIVERSAL GLASSMORPHISM, AND PLOT ISOLATION SCRIPT -->
+<script>
+    (function() {
+        function applyGlobalTheme() {
+            const currentTheme = localStorage.getItem('mn-theme') || 'cosmic';
+            const currentBg = localStorage.getItem('mn-bg') || 'dark';
+            
+            const themeMatrix = {
+                cosmic: { glow1: 'rgba(79, 70, 229, 0.35)', glow2: 'rgba(202, 138, 4, 0.35)', accent: '#eab308' },
+                aurora: { glow1: 'rgba(6, 182, 212, 0.35)', glow2: 'rgba(217, 70, 239, 0.35)', accent: '#06b6d4' },
+                solar:  { glow1: 'rgba(249, 115, 22, 0.35)', glow2: 'rgba(220, 38, 38, 0.35)', accent: '#f97316' },
+                matrix: { glow1: 'rgba(16, 185, 129, 0.35)', glow2: 'rgba(132, 204, 22, 0.35)', accent: '#10b981' }
+            };
+            
+            // Dynamic Glassmorphism Layer Matrix with strict text color values
+            const bgMatrix = {
+                dark:  { 
+                    bg: '#060814', 
+                    glass: 'rgba(11, 15, 25, 0.65)', 
+                    border: 'rgba(255, 255, 255, 0.08)', 
+                    text: '#f3f4f6', 
+                    muted: '#9ca3af' 
+                },
+                grey:  { 
+                    bg: '#1e2235', 
+                    glass: 'rgba(30, 34, 53, 0.65)', 
+                    border: 'rgba(255, 255, 255, 0.08)', 
+                    text: '#f1f5f9', 
+                    muted: '#94a3b8' 
+                },
+                light: { 
+                    bg: '#f8fafc', 
+                    glass: 'rgba(255, 255, 255, 0.70)', 
+                    border: 'rgba(15, 23, 42, 0.08)', 
+                    text: '#0f172a', 
+                    muted: '#475569' 
+                }
+            };
+            
+            const t = themeMatrix[currentTheme] || themeMatrix.cosmic;
+            const b = bgMatrix[currentBg] || bgMatrix.dark;
+            
+            document.documentElement.style.setProperty('--glow-1', t.glow1);
+            document.documentElement.style.setProperty('--glow-2', t.glow2);
+            document.documentElement.style.setProperty('--accent', t.accent);
+            
+            let overrideStyle = document.getElementById('mn-theme-overrides');
+            if (!overrideStyle) {
+                overrideStyle = document.createElement('style');
+                overrideStyle.id = 'mn-theme-overrides';
+                document.head.appendChild(overrideStyle);
+            }
+            
+            overrideStyle.innerHTML = `
+                /* Base Scaffolding */
+                body, html, .grid-bg { background-color: ${b.bg} !important; color: ${b.text} !important; position: relative; overflow-x: hidden; }
+                
+                /* High-Contrast Dynamic Text Engine Rules */
+                h1, h2, h3, h4, h5, h6, th, strong, .text-white { color: ${b.text} !important; }
+                p, span, li, td, label, .text-gray-400, .text-gray-300, .text-slate-400 { color: ${b.muted} !important; }
+                
+                /* Interactive Theme Accents */
+                .text-yellow-500, .text-gold, .group-hover\\:text-yellow-400, a:hover { color: var(--accent) !important; }
+                .border-yellow-500, .border-yellow-500\\/30 { border-color: var(--accent) !important; }
+                
+                /* Universal Glassmorphism System Application */
+                nav, header, footer, aside, 
+                .card, .bg-\\[\\#1e293b\\], .bg-slate-900, .bg-\\[\\#1e293b\\]\\/50, .bg-\\[\\#0b0f19\\], 
+                section.panel, div.dashboard-card {
+                    background: ${b.glass} !important;
+                    backdrop-filter: blur(16px) saturate(120%) !important;
+                    -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+                    border: 1px solid ${b.border} !important;
+                }
+                
+                /* Inputs & Control Interface Matching */
+                input, select, textarea { 
+                    background: ${b.glass} !important; 
+                    color: ${b.text} !important; 
+                    border: 1px solid ${b.border} !important; 
+                    backdrop-filter: blur(8px) !important;
+                }
+                
+                /* ABSOLUTE PLOT OPAQUE ISOLATION ENGINE (index.html Safeguard) */
+                .js-plotly-plot, .plot-container, .main-svg, .plotly, #orbit-plot, [id^="plotly-html-element"] {
+                    background-color: #000000 !important;
+                    background: #000000 !important;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                    opacity: 1 !important;
+                    border-radius: 4px;
+                }
+                
+                /* Ambient Glow Infrastructure */
+                .glow-orb {
+                    position: absolute;
+                    filter: blur(130px);
+                    opacity: 0.22;
+                    mix-blend-mode: screen;
+                    z-index: 0;
+                    pointer-events: none;
+                    animation: floatGlow 14s ease-in-out infinite alternate;
+                }
+                @keyframes floatGlow {
+                    0% { transform: translate(0px, 0px) scale(1); }
+                    100% { transform: translate(40px, 60px) scale(1.15); }
+                }
+            `;
+
+            function initializeGlowNodes() {
+                if (!document.body) return;
+                let orb1 = document.getElementById('mn-glow-left');
+                let orb2 = document.getElementById('mn-glow-right');
+                
+                if (!orb1) {
+                    orb1 = document.createElement('div');
+                    orb1.id = 'mn-glow-left';
+                    orb1.className = 'glow-orb';
+                    orb1.style.cssText = 'top: -5%; left: -5%; width: 55vw; height: 55vw;';
+                    document.body.insertBefore(orb1, document.body.firstChild);
+                }
+                if (!orb2) {
+                    orb2 = document.createElement('div');
+                    orb2.id = 'mn-glow-right';
+                    orb2.className = 'glow-orb';
+                    orb2.style.cssText = 'top: 25%; right: -5%; width: 45vw; height: 45vw; animation-delay: -5s;';
+                    document.body.insertBefore(orb2, document.body.firstChild);
+                }
+                orb1.style.backgroundColor = 'var(--glow-1)';
+                orb2.style.backgroundColor = 'var(--glow-2)';
+            }
+
+            if (document.body) {
+                initializeGlowNodes();
+            } else {
+                document.addEventListener('DOMContentLoaded', initializeGlowNodes);
+            }
+        }
+        window.applyGlobalTheme = applyGlobalTheme;
+        applyGlobalTheme();
+    })();
+</script>
+</head>
+<body class="relative min-h-screen grid-bg selection:bg-yellow-500/30 selection:text-yellow-200">
+
+    
+
+    <!-- Navigation Bar -->
+    <nav class="relative z-10 border-b border-gray-800/60 bg-[#060814]/70 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <a href="#" class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                    <span class="text-yellow-500 font-extrabold">🛰️ MarsNet</span><span class="text-gray-400 font-light text-base">RL</span>
+                </a>
+                <div class="flex flex-wrap gap-4">
+    <!-- Framework Button -->
+    <a href="/framework" class="px-5 py-2.5 bg-[#1e293b] hover:bg-slate-700 text-white font-medium text-sm rounded-lg border border-gray-800 transition-all duration-200 shadow-sm hover:border-yellow-500/30">
+        🧠 Framework
+    </a>
+
+    <!-- Components Button -->
+    <a href="/components" class="px-5 py-2.5 bg-[#1e293b] hover:bg-slate-700 text-white font-medium text-sm rounded-lg border border-gray-800 transition-all duration-200 shadow-sm hover:border-yellow-500/30">
+        🛠️ Components
+    </a>
+
+    <!-- Documentation Button -->
+    <a href="/documentation" class="px-5 py-2.5 bg-[#1e293b] hover:bg-slate-700 text-white font-medium text-sm rounded-lg border border-gray-800 transition-all duration-200 shadow-sm hover:border-yellow-500/30">
+        📚 Documentation
+    </a>
+                </div>
+                <div class="flex items-center gap-4">
+            <!-- Glow Core Select Engine -->
+            <div class="flex items-center gap-1.5 text-xs">
+                <span class="text-gray-400">Style</span>
+                <select id="themeStylePicker" onchange="updateThemePreference()" class="bg-[#0b0f19] text-gray-300 border border-gray-850 px-2.5 py-1 rounded focus:outline-none cursor-pointer text-xs">
+                    <option value="cosmic">Cosmic Void (Indigo/Gold)</option>
+                    <option value="aurora">Cyber Aurora (Cyan/Magenta)</option>
+                    <option value="solar">Solar Flare (Orange/Red)</option>
+                    <option value="matrix">Matrix Deep (Emerald/Lime)</option>
+                </select>
+            </div>
+
+            <!-- Canvas Background Matrix Switch -->
+            <div class="flex items-center gap-1.5 text-xs">
+                <span class="text-gray-400">Canvas</span>
+                <select id="themeBgPicker" onchange="updateThemePreference()" class="bg-[#0b0f19] text-gray-300 border border-gray-850 px-2.5 py-1 rounded focus:outline-none cursor-pointer text-xs">
+                    <option value="dark">Deep Space (Dark)</option>
+                    <option value="grey">Nebula Core (Grey)</option>
+                    <option value="light">Starlight Base (Light)</option>
+                </select>
+            </div>
+                <a href="/dashboard" class="text-xs code-font font-medium text-yellow-500 border border-yellow-500/30 bg-yellow-500/5 px-3 py-1.5 rounded hover:bg-yellow-500/10 transition">
+                    v1.0.0 Stable
+                </a>
+            </div>
+        </div>
+    </div>
+    </nav>
+
+    <!-- Hero Framework Section -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-24 text-center flex flex-col items-center">
+        
+        <!-- Feature Badge Tag -->
+        <div class="reveal-up inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-900 border border-gray-800 text-xs font-medium text-gray-300 mb-6">
+            <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Orchestrating Deep-Space Constellation Topologies
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="reveal-up delay-1 text-4xl sm:text-6xl font-extrabold text-white tracking-tight max-w-4xl leading-[1.1] mb-6">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-amber-200 to-white">Autonomous Martian satellite simulator</span>
+        </h1>
+
+        <!-- Subtext description -->
+        <p class="reveal-up delay-2 text-lg text-gray-400 max-w-2xl font-light leading-relaxed mb-10">
+            run interactive orbital simulations across Martian space
+        </p>
+
+        <!-- CTA Trigger Action Buttons -->
+        <div class="reveal-up delay-3 flex flex-col sm:flex-row gap-4 items-center mb-20">
+            <a href="/dashboard" class="group relative px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg shadow-lg shadow-yellow-500/10 transition duration-300 transform active:scale-95 flex items-center gap-2">
+                Try MarsNet Console
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+            <a href="#features" class="px-6 py-3 bg-gray-950 hover:bg-gray-900 border border-gray-800 hover:border-gray-700 text-gray-300 font-medium rounded-lg transition duration-300">
+                Read Architecture Specs
+            </a>
+        </div>
+
+        <!-- Visual Component Block (Dynamic Multi-Agent Graph Showcase) -->
+        <div class="reveal-up delay-3 w-full max-w-5xl bg-gray-950/60 border border-gray-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-2xl relative group">
+            <div class="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-700 rounded-2xl pointer-events-none"></div>
+            
+            <!-- Window Bar Chrome Controls -->
+            <div class="flex items-center justify-between border-b border-gray-900 pb-4 mb-6">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-red-500/40"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500/40"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500/40"></span>
+                    <span class="text-xs code-font text-gray-500 ml-2">agent_routing_topology.py</span>
+                </div>
+                <span class="text-xs text-gray-600 uppercase tracking-widest font-semibold">Interactive Framework Graph</span>
+            </div>
+
+            <!-- Conceptual Framework Diagram Flow Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 p-4 relative">
+                
+                <!-- Node 1 -->
+                <div class="bg-[#0b0f19] border border-gray-800 rounded-xl p-5 text-left relative">
+                    <div class="absolute -top-3 left-4 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[10px] code-font px-2 py-0.5 rounded font-medium">State Reader</div>
+                    <p class="text-sm font-semibold text-gray-200 mt-1">Keplerian State Engine</p>
+                    <p class="text-xs text-gray-400 mt-2">Ingests coordinate positions ($x, y, z$) for satellites, Phobos, and Deimos drifts.</p>
+                </div>
+
+                <!-- Node 2 (Active Core Running Engine) -->
+                <div class="bg-[#0b0f19] border border-yellow-500/30 node-pulse rounded-xl p-5 text-left relative transform md:scale-105 shadow-xl">
+                    <div class="absolute -top-3 left-4 bg-yellow-500 text-black text-[10px] code-font px-2 py-0.5 rounded font-bold">RL Policy Loop</div>
+                    <p class="text-sm font-semibold text-white mt-1">Autonomous Agent Routing</p>
+                    <p class="text-xs text-gray-300 mt-2">Calculates real-time ΔV execution paths minimizing kinetic collision factors.</p>
+                </div>
+
+                <!-- Node 3 -->
+                <div class="bg-[#0b0f19] border border-gray-800 rounded-xl p-5 text-left relative">
+                    <div class="absolute -top-3 left-4 bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[10px] code-font px-2 py-0.5 rounded font-medium">Telemetry Trace</div>
+                    <p class="text-sm font-semibold text-gray-200 mt-1">Log Analytics Output</p>
+                    <p class="text-xs text-gray-400 mt-2">Streams dynamic uptime evaluations, asset tracking, and fuel optimization matrices.</p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Content Sections / Core Architecture Grid -->
+    <section id="features" class="relative z-10 max-w-7xl mx-auto px-6 py-16 border-t border-gray-900">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-4">
+                <div class="text-yellow-500 font-bold text-lg mb-2">✦ Stateful Systems</div>
+                <p class="text-sm text-gray-400 leading-relaxed">Move past standard, linear code loops. MarsNet models stateful routing graphs engineered to survive runtime network shifts dynamically.</p>
+            </div>
+            <div class="p-4">
+                <div class="text-yellow-500 font-bold text-lg mb-2">✦ Comprehensive Traces</div>
+                <p class="text-sm text-gray-400 leading-relaxed">Monitor execution velocities, active drift tolerances, and real-time computational overhead diagnostics natively inside unified views.</p>
+            </div>
+            <div class="p-4">
+                <div class="text-yellow-500 font-bold text-lg mb-2">✦ Production Ready</div>
+                <p class="text-sm text-gray-400 leading-relaxed">Seamless design built explicitly to bridge raw mathematical simulation models directly to beautiful interactive interfaces.</p>
+            </div>
+        </div>
+    </section>
+<script>
+    // Initialize component selectors from local memory values on window initialization
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('themeStylePicker').value = localStorage.getItem('mn-theme') || 'cosmic';
+        document.getElementById('themeBgPicker').value = localStorage.getItem('mn-bg') || 'dark';
+    });
+
+    function updateThemePreference() {
+        const selectedTheme = document.getElementById('themeStylePicker').value;
+        const selectedBg = document.getElementById('themeBgPicker').value;
+        
+        localStorage.setItem('mn-theme', selectedTheme);
+        localStorage.setItem('mn-bg', selectedBg);
+        
+        // Execute instant global runtime update handshake
+        if(window.applyGlobalTheme) {
+            window.applyGlobalTheme();
+        }
+    }
+</script>
+</body>
+</html>
