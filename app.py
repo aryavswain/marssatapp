@@ -11,6 +11,7 @@ class MartianOrbitalEnv:
     """A multi-dimensional 1D physics-based orbital environment for satellite stabilization."""
     def __init__(self, target_alt, initial_alt=None):
         self.target_altitude = target_alt
+        # Fix 1 & 5: Let initial conditions vary naturally without seed resets
         if initial_alt is not None:
             self.current_altitude = initial_alt
         else:
@@ -75,27 +76,40 @@ class MartianOrbitalEnv:
         
         error = self.current_altitude - self.target_altitude
         
-        # Smoother, continuous optimizing reward function
-        reward = -0.1 * abs(error) - 0.2 * abs(self.velocity) - fuel_burned
-        if abs(error) < 5:
-            reward += 20.0  # Proximity locked reward
+        # Fix 2: Smooth gradient reward function and exponential proximity penalties
+        w1 = 0.005
+        w2 = 5.0
+        reward = -w1 * (error ** 2) - w2 * fuel_burned
+        
+        # Convert to absolute orbital radii from Mars center (R_mars = 3389.5 km)
+        r_sat = 3389.5 + self.current_altitude
+        dist_phobos = abs(r_sat - 9376.0)
+        dist_deimos = abs(r_sat - 23463.0)
+        
+        # Exponential scaling penalties for moon orbits and traffic congestion zones
+        penalty_phobos = 30.0 * np.exp(-0.01 * dist_phobos)
+        penalty_deimos = 30.0 * np.exp(-0.01 * dist_deimos)
+        penalty_congestion = 15.0 * np.exp(-0.04 * abs(error))
+        
+        reward -= (penalty_phobos + penalty_deimos + penalty_congestion)
             
-        # Check bounds or critical failures
+        # Check bounds or critical failures (Success/fail step thresholds removed from reward calculation)
         done = self.current_step >= self.max_steps
         if abs(error) > 250 or (self.fuel_remaining <= 0 and abs(error) > 15):
             done = True
-            reward -= 100.0  # Terminal failure penalty
             
         return self.get_state_index(), reward, done, fuel_burned
 
 class QTrackingAgent:
-    def __init__(self, alpha=0.1, gamma=0.95, epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.01):
+    # Fix 4: Set balanced values for the Bellman equation (gamma=0.99 looks deeper into the future)
+    def __init__(self, alpha=0.1, gamma=0.99, epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.01):
         self.alpha = alpha
         self.gamma = gamma
         self.epsilon = epsilon
         self.initial_epsilon = epsilon
         self.epsilon_decay = epsilon_decay
         self.min_epsilon = min_epsilon
+        self.episode_count = 0  # Fix 3: Keep track of episodes for exploration resets
         
         # Table matrix layout dimensions
         self.num_error_bins = 5
@@ -107,6 +121,7 @@ class QTrackingAgent:
 
     def reset_epsilon(self):
         self.epsilon = self.initial_epsilon
+        self.episode_count = 0
 
     def reset_q_table(self):
         self.q_table = np.zeros((self.num_error_bins, self.num_vel_bins, self.num_fuel_bins, self.num_actions))
@@ -128,7 +143,11 @@ class QTrackingAgent:
         self.q_table[state_idx][action] += self.alpha * (target - current_q)
 
     def decay_epsilon(self):
+        # Fix 3: Periodic exploration disruption resets
         self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
+        self.episode_count += 1
+        if self.episode_count % 300 == 0:
+            self.epsilon = max(self.epsilon, 0.5)
 
 app = Flask(__name__, static_folder='.', template_folder='.')
 
@@ -140,7 +159,6 @@ PORT = int(os.environ.get("PORT", 8050))
 DEBUG = os.environ.get("FLASK_DEBUG", "false").lower() in ("1", "true", "yes")
 OPEN_BROWSER = os.environ.get("OPEN_BROWSER", "false").lower() in ("1", "true", "yes")
 
-# Instantiate the correct multi-dimensional agent implementation
 agent = QTrackingAgent()
 
 rl_training_logs = {
@@ -206,12 +224,12 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
     omega_phobos = (np.sqrt(GM_mars / r_phobos) / r_phobos) * 250
     omega_deimos = (np.sqrt(GM_mars / r_deimos) / r_deimos) * 250
 
-    np.random.seed(42)
+    # Fix 1 & 5: Removed hardcoded np.random.seed(42) so layout varies dynamically between runs
     sat_inc = np.random.uniform(-np.pi/4, np.pi/4, size=num_satellites)
     sat_lan = np.random.uniform(0, 2*np.pi, size=num_satellites)
 
     num_asteroids = 100
-    np.random.seed(101)
+    # Fix 1: Removed hardcoded np.random.seed(101)
     ast_r = np.random.uniform(9000, 13000, size=num_asteroids)
     ast_inc = np.random.uniform(-np.pi/12, np.pi/12, size=num_asteroids)
     ast_lan = np.random.uniform(0, 2*np.pi, size=num_asteroids)
@@ -259,7 +277,6 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
             env = sat_envs[i]
             state = env.get_state_index()
             
-            # Use frozen policy inference unless training mode checkbox is active
             action = agent.choose_action(state, force_inference=not training_mode)
             next_state, reward, done, fuel_spent = env.step(action)
             total_fuel_consumed[i] += fuel_spent
@@ -425,7 +442,7 @@ def update_dashboard():
     )
 
     collision_array = np.zeros(num_satellites, dtype=int)
-    np.random.seed(42)
+    # Fix 1 & 5: Removed seed override to keep calculations matched up with the dynamic environment
     positions = []
     
     for i in range(num_satellites):
