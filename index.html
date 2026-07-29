@@ -25,6 +25,7 @@
     <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE -->
 <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
 <!-- MARSNET-RL ENGINE: TEXT CONTRAST, UNIVERSAL GLASSMORPHISM, AND PLOT ISOLATION SCRIPT -->
+<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
 <script>
     (function() {
         function applyGlobalTheme() {
@@ -32,13 +33,12 @@
             const currentBg = localStorage.getItem('mn-bg') || 'dark';
             
             const themeMatrix = {
-                cosmic: { glow1: 'rgba(79, 70, 229, 0.35)', glow2: 'rgba(202, 138, 4, 0.35)', accent: '#eab308' },
-                aurora: { glow1: 'rgba(6, 182, 212, 0.35)', glow2: 'rgba(217, 70, 239, 0.35)', accent: '#06b6d4' },
-                solar:  { glow1: 'rgba(249, 115, 22, 0.35)', glow2: 'rgba(220, 38, 38, 0.35)', accent: '#f97316' },
-                matrix: { glow1: 'rgba(16, 185, 129, 0.35)', glow2: 'rgba(132, 204, 22, 0.35)', accent: '#10b981' }
+                cosmic: { glow1: 'rgba(79, 70, 229, 0.4)', glow2: 'rgba(202, 138, 4, 0.4)', accent: '#eab308' },
+                aurora: { glow1: 'rgba(6, 182, 212, 0.4)', glow2: 'rgba(217, 70, 239, 0.4)', accent: '#06b6d4' },
+                solar:  { glow1: 'rgba(249, 115, 22, 0.4)', glow2: 'rgba(220, 38, 38, 0.4)', accent: '#f97316' },
+                matrix: { glow1: 'rgba(16, 185, 129, 0.4)', glow2: 'rgba(132, 204, 22, 0.4)', accent: '#10b981' }
             };
             
-            // Dynamic Glassmorphism Layer Matrix with strict text color values
             const bgMatrix = {
                 dark:  { 
                     bg: '#060814', 
@@ -56,7 +56,7 @@
                 },
                 light: { 
                     bg: '#f8fafc', 
-                    glass: 'rgba(255, 255, 255, 0.70)', 
+                    glass: 'rgba(255, 255, 255, 0.75)', 
                     border: 'rgba(15, 23, 42, 0.08)', 
                     text: '#0f172a', 
                     muted: '#475569' 
@@ -66,6 +66,10 @@
             const t = themeMatrix[currentTheme] || themeMatrix.cosmic;
             const b = bgMatrix[currentBg] || bgMatrix.dark;
             
+            // FIX: Dynamic structural adjustments for Light Mode visibility
+            const mixBlendMode = currentBg === 'light' ? 'normal' : 'screen';
+            const glowOpacity = currentBg === 'light' ? '0.28' : '0.45'; // Boosted opacity engine rules
+
             document.documentElement.style.setProperty('--glow-1', t.glow1);
             document.documentElement.style.setProperty('--glow-2', t.glow2);
             document.documentElement.style.setProperty('--accent', t.accent);
@@ -107,8 +111,8 @@
                     backdrop-filter: blur(8px) !important;
                 }
                 
-                /* ABSOLUTE PLOT OPAQUE ISOLATION ENGINE (index.html Safeguard) */
-                #orbitalPlot {
+                /* ABSOLUTE PLOT OPAQUE ISOLATION ENGINE */
+                .js-plotly-plot, .plot-container, .main-svg, .plotly, #orbit-plot, #orbitalPlot, [id^="plotly-html-element"] {
                     background-color: #000000 !important;
                     background: #000000 !important;
                     backdrop-filter: none !important;
@@ -116,18 +120,14 @@
                     opacity: 1 !important;
                     border-radius: 4px;
                 }
+                .gl-container { background: transparent !important; }
                 
-                .js-plotly-plot, .plot-container, .plotly, .gl-container {
-    background: transparent !important;
-    background-color: transparent !important;
-}
-
                 /* Ambient Glow Infrastructure */
                 .glow-orb {
                     position: absolute;
-                    filter: blur(130px);
-                    opacity: 0.22;
-                    mix-blend-mode: screen;
+                    filter: blur(140px);
+                    opacity: ${glowOpacity};
+                    mix-blend-mode: ${mixBlendMode};
                     z-index: 0;
                     pointer-events: none;
                     animation: floatGlow 14s ease-in-out infinite alternate;
@@ -166,7 +166,23 @@
             } else {
                 document.addEventListener('DOMContentLoaded', initializeGlowNodes);
             }
+
+            // Sync the HTML select pickers across landing components seamlessly
+            const stylePicker = document.getElementById('themeStylePicker');
+            const bgPicker = document.getElementById('themeBgPicker');
+            if (stylePicker) stylePicker.value = currentTheme;
+            if (bgPicker) bgPicker.value = currentBg;
         }
+
+        // Expose function globally to update values from select elements
+        window.updateThemePreference = function() {
+            const stylePicker = document.getElementById('themeStylePicker');
+            const bgPicker = document.getElementById('themeBgPicker');
+            if (stylePicker) localStorage.setItem('mn-theme', stylePicker.value);
+            if (bgPicker) localStorage.setItem('mn-bg', bgPicker.value);
+            applyGlobalTheme();
+        };
+
         window.applyGlobalTheme = applyGlobalTheme;
         applyGlobalTheme();
     })();
