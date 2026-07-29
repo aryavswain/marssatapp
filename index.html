@@ -121,12 +121,10 @@
                     border-radius: 8px;
                 }
                 
-                /* Prevent nested wrapper classes from rendering solid black over WebGL elements */
-                .js-plotly-plot, .plot-container, .main-svg, .plotly, .gl-container, .gl-canvas { 
+                /* Safely handle only the outer wrapper classes, leaving WebGL nodes alone */
+                .js-plotly-plot, .plot-container, .main-svg, .plotly { 
                     background-color: transparent !important;
                     background: transparent !important;
-                    backdrop-filter: none !important;
-                    -webkit-backdrop-filter: none !important;
                 }
                 
                 /* Ambient Glow Infrastructure */
@@ -283,7 +281,7 @@
             <div class="bg-black border border-gray-800 rounded-xl p-4">
                 <h3 class="text-sm font-semibold text-gray-300 mb-2">Real-World Martian Orbital Dynamics Visualization</h3>
                 <p class="text-xs text-gray-400 mb-3">🛰️ <strong>Current Orbital Velocity:</strong> <span id="velocityMetrics" class="bg-gray-800 px-1.5 py-0.5 rounded text-yellow-500 font-mono">0.000 km/s</span> <em>(Passive Keplerian drift)</em></p>
-                <div id="orbitalPlot" class="w-full rounded bg-black"></div>
+                <div id="orbitalPlot" class="w-full h-[550px] rounded bg-black"></div>
             </div>
 
             <!-- 2. KPI METRIC GRID CONTAINER (RELOCATED BELOW PLOT) -->
