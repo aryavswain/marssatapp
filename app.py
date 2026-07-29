@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from groq import Groq
 import random
 import threading
+import time
 
 class MartianOrbitalEnv:
     """A multi-dimensional 1D physics-based orbital environment for satellite stabilization."""
@@ -169,7 +170,7 @@ rl_training_logs = {
 }
 # Remember which orbit altitude the current policy was trained for
 last_trained_altitude = None
-def run_background_training(target_altitude, episodes=4000):
+def run_background_training(target_altitude, episodes=800):
     agent.reset_q_table()
     agent.reset_epsilon()
     
@@ -198,6 +199,11 @@ def run_background_training(target_altitude, episodes=4000):
         rl_training_logs["episode_reward"].append(total_reward)
         rl_training_logs["epsilon"].append(agent.epsilon)
         rl_training_logs["max_q"].append(float(np.max(agent.q_table)))
+
+        # ⚡ CRITICAL FIX FOR LAG: Yield the Python GIL every 5 episodes
+        # This gives the Flask web server breathing room to handle UI updates instantly
+        if episode % 5 == 0:
+            time.sleep(0.001)
 
 def get_coords(r, anomaly, lan, inc):
     x_p = r * np.cos(anomaly)
@@ -450,7 +456,7 @@ def update_dashboard():
         # Run in a background thread so the dashboard map still loads instantly
         training_thread = threading.Thread(
             target=run_background_training, 
-            args=(orbit_altitude, 2000)  # 2000 episodes is plenty for a quick spin-up
+            args=(orbit_altitude, 800)  # Changed from 2000 to 800
         )
         training_thread.start()
     plot_json, current_velocity, r_orbit, sat_lan, sat_inc, omega, fuel_consumed, num_frames = build_animated_orbital_plot(
