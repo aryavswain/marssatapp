@@ -6,6 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 from groq import Groq
 import random
+import threading
 
 class MartianOrbitalEnv:
     """A multi-dimensional 1D physics-based orbital environment for satellite stabilization."""
@@ -438,14 +439,20 @@ def update_dashboard():
     global last_trained_altitude
 
     # Retrain whenever this is the first run or the target orbit changes
-    if (
+    # MODIFIED: Only run the batch training if training_mode is explicitly checked in the UI
+    if training_mode and (
         len(rl_training_logs["episode_reward"]) == 0
         or last_trained_altitude is None
         or abs(last_trained_altitude - orbit_altitude) > 1e-6
     ):
-        run_background_training(orbit_altitude, episodes=4000)
         last_trained_altitude = orbit_altitude
-
+        
+        # Run in a background thread so the dashboard map still loads instantly
+        training_thread = threading.Thread(
+            target=run_background_training, 
+            args=(orbit_altitude, 2000)  # 2000 episodes is plenty for a quick spin-up
+        )
+        training_thread.start()
     plot_json, current_velocity, r_orbit, sat_lan, sat_inc, omega, fuel_consumed, num_frames = build_animated_orbital_plot(
         num_satellites, orbit_altitude, frame_duration, training_mode=training_mode
     )
