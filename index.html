@@ -26,6 +26,7 @@
 <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
 <!-- MARSNET-RL ENGINE: TEXT CONTRAST, UNIVERSAL GLASSMORPHISM, AND PLOT ISOLATION SCRIPT -->
 <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
+<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
 <script>
     (function() {
         function applyGlobalTheme() {
@@ -66,9 +67,8 @@
             const t = themeMatrix[currentTheme] || themeMatrix.cosmic;
             const b = bgMatrix[currentBg] || bgMatrix.dark;
             
-            // FIX: Dynamic structural adjustments for Light Mode visibility
             const mixBlendMode = currentBg === 'light' ? 'normal' : 'screen';
-            const glowOpacity = currentBg === 'light' ? '0.28' : '0.45'; // Boosted opacity engine rules
+            const glowOpacity = currentBg === 'light' ? '0.28' : '0.45';
 
             document.documentElement.style.setProperty('--glow-1', t.glow1);
             document.documentElement.style.setProperty('--glow-2', t.glow2);
@@ -111,16 +111,23 @@
                     backdrop-filter: blur(8px) !important;
                 }
                 
-                /* ABSOLUTE PLOT OPAQUE ISOLATION ENGINE */
-                .js-plotly-plot, .plot-container, .main-svg, .plotly, #orbit-plot, #orbitalPlot, [id^="plotly-html-element"] {
+                /* CORRECTED PLOT OPAQUE ISOLATION SYSTEM */
+                #orbit-plot, #orbitalPlot, #rewardPlot, [id^="plotly-html-element"] {
                     background-color: #000000 !important;
                     background: #000000 !important;
                     backdrop-filter: none !important;
                     -webkit-backdrop-filter: none !important;
                     opacity: 1 !important;
-                    border-radius: 4px;
+                    border-radius: 8px;
                 }
-                .gl-container { background: transparent !important; }
+                
+                /* Prevent nested wrapper classes from rendering solid black over WebGL elements */
+                .js-plotly-plot, .plot-container, .main-svg, .plotly, .gl-container, .gl-canvas { 
+                    background-color: transparent !important;
+                    background: transparent !important;
+                    backdrop-filter: none !important;
+                    -webkit-backdrop-filter: none !important;
+                }
                 
                 /* Ambient Glow Infrastructure */
                 .glow-orb {
@@ -167,14 +174,12 @@
                 document.addEventListener('DOMContentLoaded', initializeGlowNodes);
             }
 
-            // Sync the HTML select pickers across landing components seamlessly
             const stylePicker = document.getElementById('themeStylePicker');
             const bgPicker = document.getElementById('themeBgPicker');
             if (stylePicker) stylePicker.value = currentTheme;
             if (bgPicker) bgPicker.value = currentBg;
         }
 
-        // Expose function globally to update values from select elements
         window.updateThemePreference = function() {
             const stylePicker = document.getElementById('themeStylePicker');
             const bgPicker = document.getElementById('themeBgPicker');
