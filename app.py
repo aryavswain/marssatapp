@@ -166,7 +166,8 @@ rl_training_logs = {
     "epsilon": [],
     "max_q": []
 }
-
+# Remember which orbit altitude the current policy was trained for
+last_trained_altitude = None
 def run_background_training(target_altitude, episodes=4000):
     agent.reset_q_table()
     agent.reset_epsilon()
@@ -434,8 +435,16 @@ def update_dashboard():
     frame_duration = int(data.get('frame_duration', 40))
     training_mode = bool(data.get('training_mode', False))
 
-    if len(rl_training_logs["episode_reward"]) == 0:
+    global last_trained_altitude
+
+    # Retrain whenever this is the first run or the target orbit changes
+    if (
+        len(rl_training_logs["episode_reward"]) == 0
+        or last_trained_altitude is None
+        or abs(last_trained_altitude - orbit_altitude) > 1e-6
+    ):
         run_background_training(orbit_altitude, episodes=4000)
+        last_trained_altitude = orbit_altitude
 
     plot_json, current_velocity, r_orbit, sat_lan, sat_inc, omega, fuel_consumed, num_frames = build_animated_orbital_plot(
         num_satellites, orbit_altitude, frame_duration, training_mode=training_mode
@@ -487,14 +496,10 @@ def chat():
     messages = data.get('messages', [])
     
     if GROQ_API_KEY == "replace_with_your_groq_api_key" or not GROQ_API_KEY.strip():
-        max_q = float(np.max(agent.q_table)) if len(rl_training_logs["episode_reward"]) > 0 else 0.0
-        fallback_msg = (
-            f"🛰️ <strong>[Local Operations Fallback]</strong> The <code>GROQ_API_KEY</code> environment variable is not configured. "
-            f"However, live telemetry is secure! Your active tabular Q-learning layout is tracking standard profiles across "
-            f"distinct orbital state brackets. Agent parameters look solid: current exploration rate epsilon is at <strong>{agent.epsilon:.4f}</strong>, "
-            f"and max Q-table weights sit at <strong>{max_q:.4f}</strong>. Populate your environment credentials to engage direct Llama 3.3 conversations!"
-        )
-        return jsonify({"success": True, "content": fallback_msg})
+        return jsonify({
+            "success": False,
+            "error": "GROQ_API_KEY is not configured. Set the GROQ_API_KEY environment variable with a valid Groq API key to enable the chatbot."
+        })
 
     try:
         response = client.chat.completions.create(
@@ -504,13 +509,25 @@ def chat():
             ],
             model="llama-3.3-70b-versatile",
         )
-        return jsonify({"success": True, "content": response.choices[0].message.content})
+        assistant_message = None
+        try:
+            assistant_message = response.choices[0].message.content
+        except Exception:
+            try:
+                assistant_message = response.choices[0]["message"]["content"]
+            except Exception:
+                assistant_message = None
+
+        if not assistant_message:
+            assistant_message = str(response)
+
+        return jsonify({"success": True, "content": assistant_message})
     except Exception as e:
-        error_fallback = (
-            f"⚠️ <strong>[Telemetry Routing Notice]</strong> A connection discrepancy occurred while routing through Groq cloud channels: "
-            f"<code>{str(e)}</code>. Offline telemetry remains healthy. Standard drift vectors and progressive penalties are actively processing local calculations."
-        )
-        return jsonify({"success": True, "content": error_fallback})
+        app.logger.error("Groq chat failure: %s", str(e))
+        return jsonify({
+            "success": False,
+            "error": f"Groq request failed: {str(e)}"
+        })
 
 @app.route('/framework')
 def framework():
