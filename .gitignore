@@ -1,0 +1,28 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Python egg metadata
+*.egg-info/
+*.eggs/
+
+# Distribution/build folders
+build/
+dist/
+
+# Local logs
+*.log

@@ -519,6 +519,5 @@ def open_browser():
     webbrowser.open_new(f"http://{HOST}:{PORT}/dashboard")
 
 if __name__ == '__main__':
-    if OPEN_BROWSER:
-        Timer(1.5, open_browser).start()
+    if OPEN_BROWSER:    Timer(1.5, open_browser).start()
     app.run(host=HOST, port=PORT, debug=DEBUG)
