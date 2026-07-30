@@ -22,11 +22,6 @@
             border-radius: 3px;
         }
     </style>
-    <!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE -->
-<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
-<!-- MARSNET-RL ENGINE: TEXT CONTRAST, UNIVERSAL GLASSMORPHISM, AND PLOT ISOLATION SCRIPT -->
-<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
-<!-- GLOBAL MARSNET-RL PERSISTENT THEME ENGINE WITH AMBIENT GLOW SYSTEM -->
 <script>
     (function() {
         function applyGlobalTheme() {
@@ -41,27 +36,9 @@
             };
             
             const bgMatrix = {
-                dark:  { 
-                    bg: '#060814', 
-                    glass: 'rgba(11, 15, 25, 0.65)', 
-                    border: 'rgba(255, 255, 255, 0.08)', 
-                    text: '#f3f4f6', 
-                    muted: '#9ca3af' 
-                },
-                grey:  { 
-                    bg: '#1e2235', 
-                    glass: 'rgba(30, 34, 53, 0.65)', 
-                    border: 'rgba(255, 255, 255, 0.08)', 
-                    text: '#f1f5f9', 
-                    muted: '#94a3b8' 
-                },
-                light: { 
-                    bg: '#f8fafc', 
-                    glass: 'rgba(255, 255, 255, 0.75)', 
-                    border: 'rgba(15, 23, 42, 0.08)', 
-                    text: '#0f172a', 
-                    muted: '#475569' 
-                }
+                dark:  { bg: '#060814', glass: 'rgba(11, 15, 25, 0.65)', border: 'rgba(255, 255, 255, 0.08)', text: '#f3f4f6', muted: '#9ca3af' },
+                grey:  { bg: '#1e2235', glass: 'rgba(30, 34, 53, 0.65)', border: 'rgba(255, 255, 255, 0.08)', text: '#f1f5f9', muted: '#94a3b8' },
+                light: { bg: '#f8fafc', glass: 'rgba(255, 255, 255, 0.75)', border: 'rgba(15, 23, 42, 0.08)', text: '#0f172a', muted: '#475569' }
             };
             
             const t = themeMatrix[currentTheme] || themeMatrix.cosmic;
@@ -82,36 +59,23 @@
             }
             
             overrideStyle.innerHTML = `
-                /* Base Scaffolding */
                 body, html, .grid-bg { background-color: ${b.bg} !important; color: ${b.text} !important; position: relative; overflow-x: hidden; }
-                
-                /* High-Contrast Dynamic Text Engine Rules */
                 h1, h2, h3, h4, h5, h6, th, strong, .text-white { color: ${b.text} !important; }
                 p, span, li, td, label, .text-gray-400, .text-gray-300, .text-slate-400 { color: ${b.muted} !important; }
-                
-                /* Interactive Theme Accents */
                 .text-yellow-500, .text-gold, .group-hover\\:text-yellow-400, a:hover { color: var(--accent) !important; }
                 .border-yellow-500, .border-yellow-500\\/30 { border-color: var(--accent) !important; }
-                
-                /* Universal Glassmorphism System Application */
-                nav, header, footer, aside, 
-                .card, .bg-\\[\\#1e293b\\], .bg-slate-900, .bg-\\[\\#1e293b\\]\\/50, .bg-\\[\\#0b0f19\\], 
-                section.panel, div.dashboard-card {
+                nav, header, footer, aside, .card, .bg-\\[\\#1e293b\\], .bg-slate-900, .bg-\\[\\#1e293b\\]\\/50, .bg-\\[\\#0b0f19\\], section.panel, div.dashboard-card {
                     background: ${b.glass} !important;
                     backdrop-filter: blur(16px) saturate(120%) !important;
                     -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
                     border: 1px solid ${b.border} !important;
                 }
-                
-                /* Inputs & Control Interface Matching */
                 input, select, textarea { 
                     background: ${b.glass} !important; 
                     color: ${b.text} !important; 
                     border: 1px solid ${b.border} !important; 
                     backdrop-filter: blur(8px) !important;
                 }
-                
-                /* CORRECTED PLOT OPAQUE ISOLATION SYSTEM */
                 #orbit-plot, #orbitalPlot, #rewardPlot, [id^="plotly-html-element"] {
                     background-color: #000000 !important;
                     background: #000000 !important;
@@ -120,14 +84,7 @@
                     opacity: 1 !important;
                     border-radius: 8px;
                 }
-                
-                /* Safely handle only the outer wrapper classes, leaving WebGL nodes alone */
-                .js-plotly-plot, .plot-container, .main-svg, .plotly { 
-                    background-color: transparent !important;
-                    background: transparent !important;
-                }
-                
-                /* Ambient Glow Infrastructure */
+                .js-plotly-plot, .plot-container, .main-svg, .plotly { background-color: transparent !important; background: transparent !important; }
                 .glow-orb {
                     position: absolute;
                     filter: blur(140px);
@@ -166,26 +123,8 @@
                 orb2.style.backgroundColor = 'var(--glow-2)';
             }
 
-            if (document.body) {
-                initializeGlowNodes();
-            } else {
-                document.addEventListener('DOMContentLoaded', initializeGlowNodes);
-            }
-
-            const stylePicker = document.getElementById('themeStylePicker');
-            const bgPicker = document.getElementById('themeBgPicker');
-            if (stylePicker) stylePicker.value = currentTheme;
-            if (bgPicker) bgPicker.value = currentBg;
+            if (document.body) { initializeGlowNodes(); } else { document.addEventListener('DOMContentLoaded', initializeGlowNodes); }
         }
-
-        window.updateThemePreference = function() {
-            const stylePicker = document.getElementById('themeStylePicker');
-            const bgPicker = document.getElementById('themeBgPicker');
-            if (stylePicker) localStorage.setItem('mn-theme', stylePicker.value);
-            if (bgPicker) localStorage.setItem('mn-bg', bgPicker.value);
-            applyGlobalTheme();
-        };
-
         window.applyGlobalTheme = applyGlobalTheme;
         applyGlobalTheme();
     })();
@@ -214,23 +153,18 @@
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1">Debris Density (<span id="debrisVal">0.3</span>)</label>
-                        <input id="debris_density" type="range" min="0.0" max="1.0" value="0.3" step="0.1" class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('debrisVal').innerText=this.value;">
+                        <!-- Added triggerUpdate() invocation on user input to repair slider behavior -->
+                        <input id="debris_density" type="range" min="0.0" max="1.0" value="0.3" step="0.1" class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer" oninput="document.getElementById('debrisVal').innerText=this.value; triggerUpdate();">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1">
-                            Simulation Frame Delay: <span id="simSpeedVal" class="text-yellow-500 font-mono">40</span> ms
-                        </label>
-                        <input type="range" id="sim_speed" min="15" max="500" value="40" step="5" 
-                            class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer"
-                            oninput="triggerUpdate();">
-                        <p id="simTimeRate" class="text-xs text-yellow-500/80 mt-1 font-mono italic">
-                            ⏱️ Rate: ~104.2 simulated mins / real sec
-                        </p>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1">Simulation Frame Delay: <span id="simSpeedVal" class="text-yellow-500 font-mono">40</span> ms</label>
+                        <input type="range" id="sim_speed" min="15" max="500" value="40" step="5" class="w-full accent-yellow-500 bg-gray-700 h-1.5 rounded-lg appearance-none cursor-pointer" oninput="triggerUpdate();">
+                        <p id="simTimeRate" class="text-xs text-yellow-500/80 mt-1 font-mono italic">⏱️ Rate: ~104.2 simulated mins / real sec</p>
                     </div>
 
                     <div class="flex items-center gap-3 py-2">
-                        <input id="training_mode" type="checkbox" class="w-4 h-4 text-yellow-500 border-gray-600 rounded focus:ring-opacity-0 bg-gray-700 accent-yellow-500">
+                        <input id="training_mode" type="checkbox" class="w-4 h-4 text-yellow-500 border-gray-600 rounded focus:ring-opacity-0 bg-gray-700 accent-yellow-500" onchange="triggerUpdate();">
                         <label for="training_mode" class="text-sm font-medium text-gray-300">Enable Training Mode (RL Active)</label>
                     </div>
 
@@ -255,7 +189,6 @@
                 </div>
             </div>
 
-            <!-- INTEGRATED CHATBOT CONTAINER -->
             <div class="border-t border-gray-800 pt-4 flex flex-col h-[340px]">
                 <h3 class="text-sm font-bold text-gray-300 mb-2 flex items-center gap-1">💬 MarsNet Assistant</h3>
                 <div id="chat_container" class="flex-1 overflow-y-auto bg-[#1f2937] p-3 rounded space-y-2 text-xs custom-scrollbar">
@@ -272,19 +205,27 @@
         <main class="flex-1 flex flex-col overflow-y-auto custom-scrollbar bg-[#0f172a] p-6 space-y-6">
             
             <!-- HEADER TITLE BLOCK -->
-            <div>
-                <h1 class="text-3xl font-extrabold text-white">🛰️ MarsNet-RL: Autonomous Orbital Routing</h1>
-                <p class="text-gray-400 text-sm mt-1"><strong>Objective:</strong> Maintain &gt;90% network uptime while avoiding 99% of orbital collisions.</p>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-3xl font-extrabold text-white">🛰️ MarsNet-RL: Autonomous Orbital Routing</h1>
+                        <!-- Applying Changes notification wrapper badge -->
+                        <span id="applyingChangesIndicator" class="hidden text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full animate-pulse flex items-center gap-1.5 transition duration-150">
+                            🔄 Applying changes...
+                        </span>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-1"><strong>Objective:</strong> Maintain &gt;90% network uptime while avoiding 99% of orbital collisions.</p>
+                </div>
             </div>
 
-            <!-- 1. ORBITAL PLOT (MOVED UP FOR IMMEDIACY) -->
+            <!-- 1. ORBITAL PLOT -->
             <div class="bg-black border border-gray-800 rounded-xl p-4">
                 <h3 class="text-sm font-semibold text-gray-300 mb-2">Real-World Martian Orbital Dynamics Visualization</h3>
                 <p class="text-xs text-gray-400 mb-3">🛰️ <strong>Current Orbital Velocity:</strong> <span id="velocityMetrics" class="bg-gray-800 px-1.5 py-0.5 rounded text-yellow-500 font-mono">0.000 km/s</span> <em>(Passive Keplerian drift)</em></p>
                 <div id="orbitalPlot" class="w-full h-[550px] rounded bg-black"></div>
             </div>
 
-            <!-- 2. KPI METRIC GRID CONTAINER (RELOCATED BELOW PLOT) -->
+            <!-- 2. KPI METRIC GRID CONTAINER -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-[#1e293b] border border-gray-800 p-4 rounded-xl">
                     <p class="text-xs font-medium uppercase text-gray-400">Live Collision Risk</p>
@@ -330,9 +271,7 @@
                                         <th class="px-4 py-3 text-center">Uptime (%)</th>
                                     </tr>
                                 </thead>
-                                <tbody id="telemetry_tbody" class="divide-y divide-gray-800">
-                                    <!-- Rendered dynamically -->
-                                </tbody>
+                                <tbody id="telemetry_tbody" class="divide-y divide-gray-800"></tbody>
                             </table>
                         </div>
                     </div>
@@ -370,13 +309,17 @@
             const simMinsPerSec = (250000 / frameDuration) / 60;
             document.getElementById('simTimeRate').innerText = `⏱️ Rate: ~${simMinsPerSec.toFixed(1)} simulated mins / real sec`;
             
+            // Show indicator when parameter changes begin applying
+            document.getElementById('applyingChangesIndicator').classList.remove('hidden');
+
             const payload = { 
                 num_satellites: document.getElementById('num_satellites').value, 
                 sat_mass: document.getElementById('sat_mass').value, 
                 orbit_altitude: parseFloat(document.getElementById('orbit_altitude').value), 
                 routing_initialized: routingInitializedState, 
                 frame_duration: frameDuration,
-                training_mode: document.getElementById('training_mode').checked 
+                training_mode: document.getElementById('training_mode').checked,
+                debris_density: parseFloat(document.getElementById('debris_density').value) // Sent directly to backend
             };
 
             fetch('/api/update', {
@@ -386,10 +329,12 @@
             })
             .then(res => res.json())
             .then(data => {
+                // Hide indicator once request resolves successfully
+                document.getElementById('applyingChangesIndicator').classList.add('hidden');
+
                 const plotDataObj = JSON.parse(data.plot_data);
                 const graphDiv = document.getElementById('orbitalPlot');
                 
-                // FIX: Capture and persist the user's real-time zoom/pan/rotation camera coordinates
                 if (graphDiv && graphDiv.layout && graphDiv.layout.scene && graphDiv.layout.scene.camera) {
                     plotDataObj.layout.scene.camera = graphDiv.layout.scene.camera;
                 }
@@ -419,7 +364,11 @@
 
                 renderLineChart(data.line_chart);
             })
-            .catch(err => console.error("Error updating system logs metrics:", err));
+            .catch(err => {
+                // Hide indicator if the network request fails
+                document.getElementById('applyingChangesIndicator').classList.add('hidden');
+                console.error("Error updating system logs metrics:", err);
+            });
         }
 
         function initializeRouting() {
@@ -464,7 +413,7 @@
                     messagesArray.push({"role": "assistant", "content": data.content});
                     container.innerHTML += `<div class="bg-slate-800 p-2 rounded text-gray-200"><strong>Assistant:</strong> ${data.content}</div>`;
                 } else {
-                    container.innerHTML += `<div class="bg-red-900/40 border border-red-700 p-2 rounded text-red-400"><strong>Error:</strong> ${data.error || 'Failed payload connectivity to Groq.'}</div>`;
+                    container.innerHTML += `<div class="bg-red-900/40 border border-red-700 p-2 rounded text-red-400"><strong>Error:</strong> ${data.error || 'Failed payload connectivity.'}</div>`;
                 }
                 container.scrollTop = container.scrollHeight;
             })
@@ -518,22 +467,16 @@
                 paper_bgcolor: 'rgba(0,0,0,0)',
                 plot_bgcolor: 'rgba(0,0,0,0)',
                 xaxis: { 
-            title: { 
-                text: 'Training Progress (Frames)', 
-                font: { color: '#94a3b8', size: 11 } 
-            },
-            gridcolor: '#334155', 
-            tickfont: {color: '#94a3b8'} 
-        },
+                    title: { text: 'Training Progress (Frames)', font: { color: '#94a3b8', size: 11 } },
+                    gridcolor: '#334155', 
+                    tickfont: {color: '#94a3b8'} 
+                },
                 yaxis: { 
-            title: { 
-                text: 'Metric Values', 
-                font: { color: '#94a3b8', size: 11 } 
-            },
-            gridcolor: '#334155', 
-            tickfont: {color: '#94a3b8'} 
-        },
-        legend: { font: { color: '#ffffff' } }
+                    title: { text: 'Metric Values', font: { color: '#94a3b8', size: 11 } },
+                    gridcolor: '#334155', 
+                    tickfont: {color: '#94a3b8'} 
+                },
+                legend: { font: { color: '#ffffff' } }
             };
 
             Plotly.newPlot('rewardPlot', [trace1, trace2], layout);

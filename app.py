@@ -13,7 +13,6 @@ class MartianOrbitalEnv:
     """A multi-dimensional 1D physics-based orbital environment for satellite stabilization."""
     def __init__(self, target_alt, initial_alt=None):
         self.target_altitude = target_alt
-        # Fix 1 & 5: Let initial conditions vary naturally without seed resets
         if initial_alt is not None:
             self.current_altitude = initial_alt
         else:
@@ -49,7 +48,6 @@ class MartianOrbitalEnv:
     def step(self, action):
         self.current_step += 1
         
-        # Action mappings: 7 Discrete Directions/Magnitudes
         action_mapping = {
             0: 0.0,   # Coast
             1: 1.0,   # Small Up
@@ -61,41 +59,33 @@ class MartianOrbitalEnv:
         }
         thrust = action_mapping.get(action, 0.0)
         
-        # Fuel depletion calculation
         fuel_burned = abs(thrust) * 0.15 
         if self.fuel_remaining <= 0:
-            thrust = 0.0  # Dead engines if fuel tank is dry
+            thrust = 0.0  
             fuel_burned = 0.0
             
         self.fuel_remaining = max(0.0, self.fuel_remaining - fuel_burned)
-        
-        # Stable, normalized Gaussian environmental drift
         orbital_decay_accel = np.random.normal(0, 0.5) 
         
-        # Integration Equations
         self.velocity = self.velocity + thrust + orbital_decay_accel
         self.current_altitude += self.velocity
         
         error = self.current_altitude - self.target_altitude
         
-        # Fix 2: Smooth gradient reward function and exponential proximity penalties
         w1 = 0.005
         w2 = 5.0
         reward = -w1 * (error ** 2) - w2 * fuel_burned
         
-        # Convert to absolute orbital radii from Mars center (R_mars = 3389.5 km)
         r_sat = 3389.5 + self.current_altitude
         dist_phobos = abs(r_sat - 9376.0)
         dist_deimos = abs(r_sat - 23463.0)
         
-        # Exponential scaling penalties for moon orbits and traffic congestion zones
         penalty_phobos = 30.0 * np.exp(-0.01 * dist_phobos)
         penalty_deimos = 30.0 * np.exp(-0.01 * dist_deimos)
         penalty_congestion = 15.0 * np.exp(-0.04 * abs(error))
         
         reward -= (penalty_phobos + penalty_deimos + penalty_congestion)
             
-        # Check bounds or critical failures (Success/fail step thresholds removed from reward calculation)
         done = self.current_step >= self.max_steps
         if abs(error) > 250 or (self.fuel_remaining <= 0 and abs(error) > 15):
             done = True
@@ -103,7 +93,6 @@ class MartianOrbitalEnv:
         return self.get_state_index(), reward, done, fuel_burned
 
 class QTrackingAgent:
-    # Fix 4: Set balanced values for the Bellman equation (gamma=0.99 looks deeper into the future)
     def __init__(self, alpha=0.1, gamma=0.99, epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.01):
         self.alpha = alpha
         self.gamma = gamma
@@ -111,9 +100,8 @@ class QTrackingAgent:
         self.initial_epsilon = epsilon
         self.epsilon_decay = epsilon_decay
         self.min_epsilon = min_epsilon
-        self.episode_count = 0  # Fix 3: Keep track of episodes for exploration resets
+        self.episode_count = 0  
         
-        # Table matrix layout dimensions
         self.num_error_bins = 5
         self.num_vel_bins = 3
         self.num_fuel_bins = 3
@@ -145,7 +133,6 @@ class QTrackingAgent:
         self.q_table[state_idx][action] += self.alpha * (target - current_q)
 
     def decay_epsilon(self):
-        # Fix 3: Periodic exploration disruption resets
         self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
         self.episode_count += 1
         if self.episode_count % 300 == 0:
@@ -168,8 +155,8 @@ rl_training_logs = {
     "epsilon": [],
     "max_q": []
 }
-# Remember which orbit altitude the current policy was trained for
 last_trained_altitude = None
+
 def run_background_training(target_altitude, episodes=800):
     agent.reset_q_table()
     agent.reset_epsilon()
@@ -186,12 +173,9 @@ def run_background_training(target_altitude, episodes=800):
         while True:
             action = agent.choose_action(state_idx, force_inference=False)
             next_state_idx, reward, done, _ = env.step(action)
-            
             agent.learn(state_idx, action, reward, next_state_idx, done)
-            
             state_idx = next_state_idx
             total_reward += reward
-            
             if done:
                 break
                 
@@ -200,8 +184,6 @@ def run_background_training(target_altitude, episodes=800):
         rl_training_logs["epsilon"].append(agent.epsilon)
         rl_training_logs["max_q"].append(float(np.max(agent.q_table)))
 
-        # ⚡ CRITICAL FIX FOR LAG: Yield the Python GIL every 5 episodes
-        # This gives the Flask web server breathing room to handle UI updates instantly
         if episode % 5 == 0:
             time.sleep(0.001)
 
@@ -213,7 +195,7 @@ def get_coords(r, anomaly, lan, inc):
     z_s = y_p * np.sin(inc)
     return x_s, y_s, z_s
 
-def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, training_mode=False):
+def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, debris_density=0.3, training_mode=False):
     R_mars = 3389.5  
     GM_mars = 42828.3  
     
@@ -232,17 +214,16 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
     omega_phobos = (np.sqrt(GM_mars / r_phobos) / r_phobos) * 250
     omega_deimos = (np.sqrt(GM_mars / r_deimos) / r_deimos) * 250
 
-    # Fix 1 & 5: Removed hardcoded np.random.seed(42) so layout varies dynamically between runs
     sat_inc = np.random.uniform(-np.pi/4, np.pi/4, size=num_satellites)
     sat_lan = np.random.uniform(0, 2*np.pi, size=num_satellites)
 
-    num_asteroids = 100
-    # Fix 1: Removed hardcoded np.random.seed(101)
-    ast_r = np.random.uniform(9000, 13000, size=num_asteroids)
-    ast_inc = np.random.uniform(-np.pi/12, np.pi/12, size=num_asteroids)
-    ast_lan = np.random.uniform(0, 2*np.pi, size=num_asteroids)
-    ast_phase = np.random.uniform(0, 2*np.pi, size=num_asteroids)
-    ast_omega = (np.sqrt(GM_mars / ast_r) / ast_r) * 250
+    # Dynamic generation based on UI debris slider
+    num_asteroids = max(0, int(debris_density * 300))
+    ast_r = np.random.uniform(9000, 13000, size=num_asteroids) if num_asteroids > 0 else np.array([])
+    ast_inc = np.random.uniform(-np.pi/12, np.pi/12, size=num_asteroids) if num_asteroids > 0 else np.array([])
+    ast_lan = np.random.uniform(0, 2*np.pi, size=num_asteroids) if num_asteroids > 0 else np.array([])
+    ast_phase = np.random.uniform(0, 2*np.pi, size=num_asteroids) if num_asteroids > 0 else np.array([])
+    ast_omega = (np.sqrt(GM_mars / ast_r) / ast_r) * 250 if num_asteroids > 0 else np.array([])
 
     fig = go.Figure()
     theta_track = np.linspace(0, 2 * np.pi, 100)
@@ -441,30 +422,27 @@ def update_dashboard():
     orbit_altitude = float(data.get('orbit_altitude', 1000))
     frame_duration = int(data.get('frame_duration', 40))
     training_mode = bool(data.get('training_mode', False))
+    debris_density = float(data.get('debris_density', 0.3))
 
     global last_trained_altitude
 
-    # Retrain whenever this is the first run or the target orbit changes
-    # MODIFIED: Only run the batch training if training_mode is explicitly checked in the UI
     if training_mode and (
         len(rl_training_logs["episode_reward"]) == 0
         or last_trained_altitude is None
         or abs(last_trained_altitude - orbit_altitude) > 1e-6
     ):
         last_trained_altitude = orbit_altitude
-        
-        # Run in a background thread so the dashboard map still loads instantly
         training_thread = threading.Thread(
             target=run_background_training, 
-            args=(orbit_altitude, 800)  # Changed from 2000 to 800
+            args=(orbit_altitude, 800)
         )
         training_thread.start()
+
     plot_json, current_velocity, r_orbit, sat_lan, sat_inc, omega, fuel_consumed, num_frames = build_animated_orbital_plot(
-        num_satellites, orbit_altitude, frame_duration, training_mode=training_mode
+        num_satellites, orbit_altitude, frame_duration, debris_density=debris_density, training_mode=training_mode
     )
 
     collision_array = np.zeros(num_satellites, dtype=int)
-    # Fix 1 & 5: Removed seed override to keep calculations matched up with the dynamic environment
     positions = []
     
     for i in range(num_satellites):
@@ -511,7 +489,7 @@ def chat():
     if GROQ_API_KEY == "replace_with_your_groq_api_key" or not GROQ_API_KEY.strip():
         return jsonify({
             "success": False,
-            "error": "GROQ_API_KEY is not configured. Set the GROQ_API_KEY environment variable with a valid Groq API key to enable the chatbot."
+            "error": "GROQ_API_KEY is not configured."
         })
 
     try:
@@ -522,49 +500,25 @@ def chat():
             ],
             model="llama-3.3-70b-versatile",
         )
-        assistant_message = None
-        try:
-            assistant_message = response.choices[0].message.content
-        except Exception:
-            try:
-                assistant_message = response.choices[0]["message"]["content"]
-            except Exception:
-                assistant_message = None
-
-        if not assistant_message:
-            assistant_message = str(response)
-
+        assistant_message = response.choices[0].message.content
         return jsonify({"success": True, "content": assistant_message})
     except Exception as e:
-        app.logger.error("Groq chat failure: %s", str(e))
-        return jsonify({
-            "success": False,
-            "error": f"Groq request failed: {str(e)}"
-        })
+        return jsonify({"success": False, "error": str(e)})
 
 @app.route('/framework')
-def framework():
-    return send_from_directory('.', 'framework.html')
-
+def framework(): return send_from_directory('.', 'framework.html')
 @app.route('/components')
-def components():
-    return send_from_directory('.', 'components.html')
-
+def components(): return send_from_directory('.', 'components.html')
 @app.route('/documentation')
-def documentation():
-    return send_from_directory('.', 'documentation.html') 
-
+def documentation(): return send_from_directory('.', 'documentation.html') 
 @app.route('/')
-def landing():
-    return send_from_directory('.', 'landing.html')
-
+def landing(): return send_from_directory('.', 'landing.html')
 @app.route('/dashboard')
-def dashboard():
-    return send_from_directory('.', 'index.html')
+def dashboard(): return send_from_directory('.', 'index.html')
 
 def open_browser():
     webbrowser.open_new(f"http://{HOST}:{PORT}/dashboard")
 
 if __name__ == '__main__':
-    if OPEN_BROWSER:    Timer(1.5, open_browser).start()
+    if OPEN_BROWSER: Timer(1.5, open_browser).start()
     app.run(host=HOST, port=PORT, debug=DEBUG)
