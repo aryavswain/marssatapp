@@ -217,7 +217,6 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
     sat_inc = np.random.uniform(-np.pi/4, np.pi/4, size=num_satellites)
     sat_lan = np.random.uniform(0, 2*np.pi, size=num_satellites)
 
-    # Dynamic generation based on UI debris slider
     num_asteroids = max(0, int(debris_density * 300))
     ast_r = np.random.uniform(9000, 13000, size=num_asteroids) if num_asteroids > 0 else np.array([])
     ast_inc = np.random.uniform(-np.pi/12, np.pi/12, size=num_asteroids) if num_asteroids > 0 else np.array([])
@@ -259,9 +258,17 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
     sat_envs = [MartianOrbitalEnv(orbit_altitude) for _ in range(num_satellites)]
     total_fuel_consumed = [0.0] * num_satellites
 
+    # Lists to monitor performance specifically during this animation run
+    anim_rewards = []
+    anim_max_q = []
+
     for t in range(num_frames):
         s_x, s_y, s_z, s_hover = [], [], [], []
         s_color, s_size = [], []
+        
+        frame_rewards = []
+        frame_q_vals = []
+
         for i in range(num_satellites):
             env = sat_envs[i]
             state = env.get_state_index()
@@ -272,6 +279,10 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
             
             if training_mode:
                 agent.learn(state, action, reward, next_state, done)
+
+            # Log frame statistics per satellite
+            frame_rewards.append(reward)
+            frame_q_vals.append(float(np.max(agent.q_table[state])))
             
             dynamic_r = R_mars + env.current_altitude
             ma = (2 * np.pi / num_satellites) * i + (omega * t)
@@ -298,6 +309,14 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
             else:
                 s_color.append('#ff3333')
                 s_size.append(9)
+
+        # Aggregate frame logs across all operational satellites
+        if num_satellites > 0:
+            anim_rewards.append(float(np.mean(frame_rewards)))
+            anim_max_q.append(float(np.mean(frame_q_vals)))
+        else:
+            anim_rewards.append(0.0)
+            anim_max_q.append(0.0)
 
         a_x, a_y, a_z = [], [], []
         for j in range(num_asteroids):
@@ -412,7 +431,7 @@ def build_animated_orbital_plot(num_satellites, orbit_altitude, frame_duration, 
         title=dict(text="⏳ Elapsed: 0m 0s", x=0.05, y=0.04, xanchor='left', yanchor='top', font=dict(color="rgba(255, 255, 255, 0.55)", size=12)),
         legend=dict(x=0.05, y=0.95, xanchor='left', yanchor='top', font=dict(color="white"))
     )
-    return fig.to_json(), v_orbit_kms, r_orbit, sat_lan, sat_inc, omega, total_fuel_consumed, num_frames
+    return fig.to_json(), v_orbit_kms, r_orbit, sat_lan, sat_inc, omega, total_fuel_consumed, num_frames, anim_rewards, anim_max_q
 
 @app.route('/api/update', methods=['POST'])
 def update_dashboard():
@@ -438,7 +457,8 @@ def update_dashboard():
         )
         training_thread.start()
 
-    plot_json, current_velocity, r_orbit, sat_lan, sat_inc, omega, fuel_consumed, num_frames = build_animated_orbital_plot(
+    # Capture animation-specific performance metrics directly from the generation process
+    plot_json, current_velocity, r_orbit, sat_lan, sat_inc, omega, fuel_consumed, num_frames, anim_rewards, anim_max_q = build_animated_orbital_plot(
         num_satellites, orbit_altitude, frame_duration, debris_density=debris_density, training_mode=training_mode
     )
 
@@ -469,10 +489,8 @@ def update_dashboard():
             "uptime": uptime_percentage[k]
         })
 
-    step_stride = max(1, len(rl_training_logs["episode_reward"]) // num_frames)
-    chart_rewards = rl_training_logs["episode_reward"][::step_stride][:num_frames]
-    chart_max_q = rl_training_logs["max_q"][::step_stride][:num_frames]
-    line_chart_data = list(zip(chart_rewards, chart_max_q))
+    # The line chart now directly mirrors the specific environment metrics from the active animation loop
+    line_chart_data = list(zip(anim_rewards, anim_max_q))
 
     return jsonify({
         "plot_data": plot_json,
